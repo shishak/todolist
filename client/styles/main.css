@@ -13,8 +13,8 @@
 body {
   font-family: 'Roboto Medium', Roboto, sans-serif;
   font-size: 24px;
-  background-color: #880e4f;
-  color: #fce4ec;
+  background-color: #263238;
+  color: #eceff1;
   margin: 0;
   padding: 0;
 }
@@ -23,13 +23,13 @@ header {
   -webkit-user-select: none;
   user-select: none;
   width: 1cw;
-  background-color: #ad1457;
+  background-color: #37474f;
   padding: 20px 20px 23px 30px;
   font-family: 'Roboto Light', Roboto, sans-serif;
   font-size: 45px;
 }
 header:hover {
-  background-color: #e91e63;
+  background-color: #607d8b;
   cursor: pointer;
 }
 header:focus {
@@ -37,7 +37,7 @@ header:focus {
 }
 #container i.fa-circle-o-notch {
   padding: 50px;
-  color: #ad1457;
+  color: #37474f;
 }
 @-webkit-keyframes fadeInLeft {
   0% {
@@ -99,7 +99,7 @@ ul li label:first-child {
   padding-top: 6px;
 }
 ul li label:hover {
-  background-color: #c2185b;
+  background-color: #455a64;
   cursor: pointer;
 }
 ul li label i.fa-check-fixed {
@@ -113,8 +113,8 @@ ul li label input[type='checkbox'] {
 }
 #extendable {
   width: 1cw;
-  background-color: #8d0e52;
-  color: #f8bbd0;
+  background-color: #28353b;
+  color: #cfd8dc;
   padding: 28px;
   display: none;
 }
@@ -122,23 +122,23 @@ ul li label input[type='checkbox'] {
   width: 300px;
   font-family: 'Roboto Medium', Roboto, sans-serif;
   border: 1px solid transparent;
-  background-color: #880e4f;
+  background-color: #263238;
   border-top-left-radius: 1px;
   border-bottom-left-radius: 1px;
   padding: 8px 8px 8px 12px;
   font-size: 26px;
-  color: #f8bbd0;
+  color: #cfd8dc;
   transition: background 0.2s ease;
 }
 #extendable input:focus {
   outline: none;
-  background-color: #c2185b;
-  color: #fce4ec;
+  background-color: #455a64;
+  color: #eceff1;
 }
 #extendable input:focus + button {
   cursor: pointer;
-  background-color: #d81b60;
-  color: #fce4ec;
+  background-color: #546e7a;
+  color: #eceff1;
 }
 #extendable button {
   padding: 9px 40px 8px;
@@ -146,7 +146,7 @@ ul li label input[type='checkbox'] {
   background-color: transparent;
   border: 1px solid transparent;
   outline: none;
-  color: #f8bbd0;
+  color: #cfd8dc;
   border-top-right-radius: 1px;
   border-bottom-right-radius: 1px;
   transition: background 0.2s ease;
@@ -154,6 +154,6 @@ ul li label input[type='checkbox'] {
 }
 #extendable button:hover {
   cursor: pointer;
-  background-color: #d81b60;
-  color: #fce4ec;
+  background-color: #546e7a;
+  color: #eceff1;
 }
