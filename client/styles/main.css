@@ -1,0 +1,159 @@
+/**
+ * http://www.google.com/design/spec/style/color.html#color-color-palette
+ * thanks to https://github.com/shuhei/material-colors
+ */
+@font-face {
+  font-family: 'Roboto Medium';
+  src: url('../fonts/Roboto-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Roboto Light';
+  src: url('../fonts/Roboto-Light.ttf') format('truetype');
+}
+body {
+  font-family: 'Roboto Medium', Roboto, sans-serif;
+  font-size: 24px;
+  background-color: #880e4f;
+  color: #fce4ec;
+  margin: 0;
+  padding: 0;
+}
+header {
+  display: block;
+  -webkit-user-select: none;
+  user-select: none;
+  width: 1cw;
+  background-color: #ad1457;
+  padding: 20px 20px 23px 30px;
+  font-family: 'Roboto Light', Roboto, sans-serif;
+  font-size: 45px;
+}
+header:hover {
+  background-color: #e91e63;
+  cursor: pointer;
+}
+header:focus {
+  outline: none;
+}
+#container i.fa-circle-o-notch {
+  padding: 50px;
+  color: #ad1457;
+}
+@-webkit-keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+#fake-header {
+  position: absolute;
+}
+#fake-header:focus {
+  outline: none;
+}
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+.fadeInLeft {
+  -webkit-animation-name: fadeInLeft;
+  animation-name: fadeInLeft;
+  -webkit-animation-duration: 0.8s;
+  animation-duration: 0.8s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+ul {
+  display: block;
+  width: 100%;
+  list-style: none;
+  -webkit-padding-start: 0;
+  -webkit-margin-before: 0;
+}
+ul li {
+  width: 100%;
+  display: block;
+}
+ul li label {
+  width: 100%;
+  display: block;
+  transition: background 0.2s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+ul li label:first-child {
+  padding-top: 6px;
+}
+ul li label:hover {
+  background-color: #c2185b;
+  cursor: pointer;
+}
+ul li label i.fa-check-fixed {
+  position: relative;
+  left: -39px;
+}
+ul li label input[type='checkbox'] {
+  margin: 32px;
+  cursor: pointer;
+  visibility: hidden;
+}
+#extendable {
+  width: 1cw;
+  background-color: #8d0e52;
+  color: #f8bbd0;
+  padding: 28px;
+  display: none;
+}
+#extendable input {
+  width: 300px;
+  font-family: 'Roboto Medium', Roboto, sans-serif;
+  border: 1px solid transparent;
+  background-color: #880e4f;
+  border-top-left-radius: 1px;
+  border-bottom-left-radius: 1px;
+  padding: 8px 8px 8px 12px;
+  font-size: 26px;
+  color: #f8bbd0;
+  transition: background 0.2s ease;
+}
+#extendable input:focus {
+  outline: none;
+  background-color: #c2185b;
+  color: #fce4ec;
+}
+#extendable input:focus + button {
+  cursor: pointer;
+  background-color: #d81b60;
+  color: #fce4ec;
+}
+#extendable button {
+  padding: 9px 40px 8px;
+  font-size: 26px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  outline: none;
+  color: #f8bbd0;
+  border-top-right-radius: 1px;
+  border-bottom-right-radius: 1px;
+  transition: background 0.2s ease;
+  border-left: none;
+}
+#extendable button:hover {
+  cursor: pointer;
+  background-color: #d81b60;
+  color: #fce4ec;
+}

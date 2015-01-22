@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Список дел</title>
+    <!-- подключаем стили: основной и Font-Awesome. -->
+    <link rel="stylesheet" type="text/css" href="client/styles/main.css">
+    <link rel="stylesheet" type="text/css" href="client/styles/font-awesome.css">
+</head>
+<body>
+<!-- добавляем свойство tabindex для fake-header, для работы без помощи мыши. -->
+<div id="fake-header" tabindex="1"></div>
+<header><i class="fa fa-bars"></i>&nbsp;&nbsp;Список дел</header>
+<div id="extendable">
+    <label>
+        <!-- добавляем свойство tabindex к input, для работы с элементом без помощи мыши. -->
+        <input name="task" tabindex="2"><button><i class="fa fa-external-link"></i></button>
+        <!-- для button tabindex не обязателен, так как отправка будет выполняться по enter -->
+    </label>
+</div>
+<div id="container">
+    <!-- ниже анимация загрузки, сделанная с использованием Font-Awesome. -->
+    <i class="fa fa-circle-o-notch fa-spin fa-5x"></i>
+</div>
+<!-- в этом приложении, в качестве примера, используется DuelJS -->
+<script type="text/javascript" src="client/scripts/duel/public/lib/duel.min.js"></script>
+<!-- DuelJS абсолютно не обязательна для использования тут, и я честно говоря не вижу
+     особого смысла пихать её в это приложение, но так как это обучающая статья - допустимо. -->
+<script type="text/javascript">
+
+    /**
+     * Получаем необходимые DOM элементы в переменные:
+     * header - <header></header> (у нас только один такой header)
+     * taskInput - <input name="task"> (у нас только один такой input)
+     * taskBtn - <button></button> (у нас лишь одна такая кнопка на странице)
+     * extendable - <div id="extendable"></div>
+     */
+    var header = document.getElementsByTagName('header')[0];
+    var taskInput = document.getElementsByName('task')[0];
+    var taskBtn = document.getElementsByTagName('button')[0];
+    var extendable = document.getElementById('extendable');
+
+    /**
+     * Функция отображения блока extendable.
+     */
+    extendable.show = function () {
+        /**
+         * Устанавливаем CSS {display: block} (показываем блок) для extendable.
+         */
+        this.style.display = 'block';
+        /**
+         * переводим фокус браузера на taskInput.
+         */
+        taskInput.focus();
+    };
+
+    /**
+     * Функция скрытия блока extendable.
+     */
+    extendable.hide = function () {
+        /**
+         * Устанавливаем CSS {display: none} (убираем блок) для extendable.
+         */
+        this.style.display = 'none';
+    };
+
+    /**
+     * Обработчик события клика по header.
+     */
+    header.onclick = function () {
+        /**
+         * Внутренняя переменная secondState используется как
+         * память состояния отображения блока extendable.
+         */
+        if (!this.secondState) {
+            extendable.show();
+            this.secondState = true;
+        } else {
+            extendable.hide();
+            this.secondState = false;
+        }
+    };
+
+    /**
+     * Обработчик свободного нажатия tab в браузере.
+     * Так как у header стоит tabindex = 1, то она будет выделена при нажатии tab.
+     * При выделении будет выполнен callback onfocus.
+     */
+    document.getElementById('fake-header').onfocus = function () {
+        extendable.show();
+        header.secondState = true;
+    };
+
+    /**
+     * Обработчик события клика по кнопке добавления taskBtn.
+     */
+    taskBtn.onclick = function () {
+        /**
+         * Добавить новую задачу
+         */
+        tasks.add({title: taskInput.value});
+        /**
+         * Очистить taskInput
+         */
+        taskInput.value = '';
+    };
+
+    /**
+     * Обработчик событий клавиатуры на taskInput.
+     */
+    taskInput.onkeyup = function (event) {
+        /**
+         * При нажатии кнопки enter скрываем extendable и
+         * кликаем по taskBtn (добавляем задачу).
+         */
+        if (event.keyCode == 13) {
+            extendable.hide();
+            header.secondState = false;
+            taskBtn.onclick();
+        }
+    };
+
+    /**
+     * Синтаксический сахар для псевдо-модели todoList.
+     * firstRender - переменная обозначающая что рендеринг еще не происходил.
+     * render(items) - метод для перерисовки списка задач, принимает массив задач.
+     *
+     * По сути я просто хочу делать так: todoList.render(tasks);
+     * и взято это из ReactJS.
+     *
+     * Для интересующихся:
+     * http://facebook.github.io/react/index.html#todoExample
+     */
+    var todoList = {
+        firstRender: true,
+        render: function (items) {
+            /**
+             * todoContainer получает <div id="container"></div>.
+             */
+            var todoContainer = document.getElementById('container');
+            /**
+             * Каждый вызов document.createElement создаёт новый DOM-элемент.
+             */
+            var listElement = document.createElement('ul');
+            /**
+             * У каждого DOM-элемента есть свойство innerHTML, которое
+             * позволяет писать/читать HTML-код в виде чистого текста.
+             *
+             * В данном случае происходит полная очистка содержимого todoContainer.
+             */
+            todoContainer.innerHTML = '';
+            /**
+             * Вызываем map от items, тем самым мы создаем дешевый цикл по обходу
+             * переданных элементов в функцию и для каждого объекта выполняем
+             * создание li >
+             *             label >
+             *                   input[type="checkbox"] + i + item.title.
+             */
+            items.map(function (item) {
+                var itemElement = document.createElement('li'),
+                    itemLabel = document.createElement('label'),
+                    itemCheck = document.createElement('input'),
+                    itemFACheck = document.createElement('i'),
+                    /**
+                     * TextNode это просто текст, мы можем
+                     * вставлять его в какой-либо DOM-элемент.
+                     */
+                    itemText = document.createTextNode(item.title);
+                /**
+                 * Указываем что itemCheck это не просто input.
+                 * На самом деле использовать именно checkbox
+                 * в данном примере не обязательно.
+                 *
+                 * Вы можете обойтись и без него, сохраняя состояние
+                 * в собственную переменную (смотрите ниже).
+                 */
+                itemCheck.type = 'checkbox';
+                /**
+                 * JavaScript не запрещает нам задавать у объекта
+                 * желаемые свойства.
+                 *
+                 * Мы будем использовать objectId в будущем - для удаления.
+                 * В item._id.$oid MongoDB присылает нам
+                 * создаваемый автоматически ID объекта.
+                 */
+                itemCheck.objectId = item._id.$oid;
+                /**
+                 * Для более красивого checkbox'а я решил
+                 * в процессе разработки заменить стандартный checkbox
+                 * на решение от Font-Awesome.
+                 *
+                 * http://fortawesome.github.io/Font-Awesome/examples/#list
+                 *
+                 * classList - это удобный регистр классов DOM-элемента.
+                 * classList.add - добавляет новый класс.
+                 * classList.remove - соответственно удаляет.
+                 *
+                 * Подробнее:
+                 * https://developer.mozilla.org/en-US/docs/Web/API/Element.classList
+                 */
+                itemFACheck.classList.add('fa');
+                itemFACheck.classList.add('fa-square');
+                itemFACheck.classList.add('fa-check-fixed');
+                /**
+                 * appendChild - это простой метод для добавления
+                 * указанного DOM-элемента внутрь текущего.
+                 *
+                 * Напоминаю структуру:
+                 *          li >
+                 *             label >
+                 *                   input[type="checkbox"] + i + item.title.
+                 */
+                itemLabel.appendChild(itemCheck);
+                itemLabel.appendChild(itemFACheck);
+                itemLabel.appendChild(itemText);
+                itemElement.appendChild(itemLabel);
+                if (todoList.firstRender) {
+                    /*
+                     * Класс, добавляющий анимацию появления, но
+                     * только при первом рендеринге (смотрите условие выше).
+                     *
+                     * Хороший комплект готовых решений по анимации находится на:
+                     * http://daneden.github.io/animate.css/
+                     */
+                    itemElement.classList.add('fadeInLeft');
+                }
+                listElement.appendChild(itemElement);
+                /**
+                 * Задаем обработчик для события клика на наш checkbox.
+                 */
+                itemCheck.onclick = function (event) {
+                    itemFACheck.classList.remove('fa-check');
+                    itemFACheck.classList.add('fa-check-square');
+                    /**
+                     * textDecoration line-through зачеркивает текст.
+                     */
+                    itemLabel.style.textDecoration = 'line-through';
+                    /**
+                     * Берем заранее положенное свойство objectId из нашего DOM-элемента
+                     * и удаляем его.
+                     */
+                    tasks.remove(this.objectId);
+                    /**
+                     * Чистим текущее событие.
+                     */
+                    this.onclick = function () {};
+                };
+            });
+            /**
+             * Завершаем рендеринг вставляя наше сгенерированное DOM-дерево в чистый container.
+             */
+            todoContainer.appendChild(listElement);
+            if (todoList.firstRender) {
+                todoList.firstRender = false;
+            }
+        }
+    };
+
+    /**
+     * MongoRESTRequest - это функция, которая на простом, объектно-ориентированном
+     * языке является классом, который наследуется от стандартного XMLHttpRequest.
+     *
+     * MongoRESTRequest принимает объект (хеш) с параметрами для MongoDB REST-сервера:
+     * server - адрес сервера с http://
+     * apiKey - API ключ
+     * collections - путь до коллекций (для облегчения синтаксиса)
+     *
+     * Код ниже с пояснением:
+     * var x = new MongoRESTRequest({
+     *  server: 'http://server/api/1', apiKey: '123', collections: '/databases/abc/collections'
+     * });
+     *
+     * @param {{server:string, apiKey:string, collections:string}} apiConfig
+     * @returns {XMLHttpRequest}
+     * @constructor
+     */
+    var MongoRESTRequest = function (apiConfig) {
+        /**
+         * Создаем объект XMLHttpRequest.
+         */
+        var api = new XMLHttpRequest();
+        /**
+         * И заносим в него необходимые нам параметры.
+         */
+        api.server = apiConfig.server;
+        api.key = apiConfig.apiKey;
+        api.collections = apiConfig.collections;
+
+        /**
+         * Добавляем метод обработки события ошибки.
+         */
+        api.error = function () {
+            console.error('database connection error');
+        };
+
+        /**
+         * И регистрируем его как обработчик события error.
+         */
+        api.addEventListener('error', api.error, false);
+
+        /**
+         * Пишем основной метод обращения к REST-API
+         * Методы ниже будут являться лишь синтаксической оберткой над этим методом.
+         *
+         * Рекомендую ознакомиться с:
+         * http://docs.mongolab.com/restapi/#overview
+         *
+         * @param method - используемый в REST метод (GET, POST, PUT или DELETE)
+         * @param resource - ресурс MongoDB, к которому мы обращаемся, например коллекция users
+         * @param data - отправляемый на сервер объект, к примеру новый документ в коллекцию
+         * @param callback - обработчик по готовности, который получит распарсенный JSON-ответ от сервера
+         */
+        api.call = function (method, resource, data, callback) {
+            /**
+             * Регистрируем наш обработчик callback.
+             */
+            this.onreadystatechange = function () {
+                if (this.readyState != 4 || this.status != 200) return;
+                return (callback instanceof Function) ? callback(JSON.parse(this.responseText)) : null;
+            };
+
+            /**
+             * Открываем синхронное соединение методом method на необходимый нам адрес.
+             * Параметр bypass позволяет нам избежать лишнего кеширования на стороне клиента.
+             */
+            this.open(method, api.server
+            + this.collections + '/' + resource + '?apiKey=' + this.key
+            + '&bypass=' + (new Date()).getTime().toString());
+
+            /**
+             * Указываем, что мы будем посылать JSON в теле запроса.
+             */
+            this.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            /**
+             * Отправляем запрос.
+             */
+            this.send(data ? JSON.stringify(data) : null);
+        };
+
+        /**
+         * Ниже четыре метода для синтаксического сахара.
+         */
+        api.get = function () {
+            var bIsFunction = arguments[1] instanceof Function, resource = arguments[0],
+                    data = bIsFunction ? null : arguments[1],
+                    callback = bIsFunction ? arguments[1] : arguments[2];
+            return this.call('GET', resource, data, callback);
+        };
+
+        api.post = function () {
+            var bIsFunction = arguments[1] instanceof Function, resource = arguments[0],
+                    data = bIsFunction ? null : arguments[1],
+                    callback = bIsFunction ? arguments[1] : arguments[2];
+            return this.call('POST', resource, data, callback);
+        };
+
+        api.put = function () {
+            var bIsFunction = arguments[1] instanceof Function, resource = arguments[0],
+                    data = bIsFunction ? null : arguments[1],
+                    callback = bIsFunction ? arguments[1] : arguments[2];
+            return this.call('PUT', resource, data, callback);
+        };
+
+        /**
+         * Вообще в JavaScript не рекомендуется использование reserved words,
+         * однако я думаю что в данном контексте это слово уместно.
+         */
+        api.delete = function () {
+            var bIsFunction = arguments[1] instanceof Function, resource = arguments[0],
+                    data = bIsFunction ? null : arguments[1],
+                    callback = bIsFunction ? arguments[1] : arguments[2];
+            return this.call('DELETE', resource, data, callback);
+        };
+
+        return api;
+    };
+
+    /**
+     * Задаем конфигурацию.
+     */
+    var config = {
+        server: 'https://api.mongolab.com/api/1',
+        apiKey: 'zkMxbxb4rWBof74uy9Qy1TNumQT0cjyj',
+        collections: '/databases/heroku_app33064428/collections'
+    };
+
+    /**
+     * Обозначаем переменную tasks как массив.
+     * На самом деле мы вызываем var tasks = new Array();
+     *
+     * https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array
+     */
+    var tasks = [];
+    /**
+     * Создаем новый поток XMLHttpRequest из нашего MongoRESTRequest.
+     * Проще говоря - делаем новый объект класса MongoRESTRequest.
+     */
+    var api = new MongoRESTRequest(config);
+    /**
+     * Подключаем DuelJS (что это такое читать на http://habrahabr.ru/post/247739/ ).
+     *
+     * На самом деле DuelJS в этом приложении АБСОЛЮТНО не требуется.
+     *
+     * Добавлена DuelJS в это приложение ТОЛЬКО для примера
+     * возможного потенциального использования DuelJS.
+     */
+    var channel = duel.channel('task_tracker');
+
+    /**
+     * Несмотря на то, что tasks - это массив, массив (Array) есть
+     * ничто иное как объект в JS который создан из new Array.
+     *
+     * Добавим в объект tasks нужные нам методы, превратив его во
+     * что-то, подобное Data-Mapper object.
+     *
+     * Метод sync будет использоваться нами для обновления данных.
+     */
+    tasks.sync = function () {
+        /**
+         * Основной код этого метода находится под условием if.
+         * window.isMaster() - это метод DuelJS, который позволяет
+         * убедиться что метод выполняется в активной вкладке, а не в фоне.
+         */
+        if (window.isMaster()) {
+            /**
+             * Выполняем REST-запрос на наш PaaS MongoDB сервер.
+             *
+             * http://docs.mongolab.com/restapi/#list-documents
+             *
+             * Выглядит как:
+             * GET /databases/{database}/collections/tasks
+             *
+             * Если вы прочитали эту строчку вы молодец.
+             *
+             * На самом деле запроса будет ДВА, первый запрос будет с методом OPTIONS.
+             * Вы сможете увидеть это, проанализировав вкладку Network
+             * вашей Developer Toolbar в браузере.
+             *
+             * api.get('tasks', function (result) { ...
+             * очень легко читается и удобно используется.
+             * Оно как бы говорит "получить коллекцию tasks и работать с ней в result"
+             */
+            api.get('tasks', function (result) {
+                /**
+                 * Отчищаем tasks, сохраняя при этом все методы и сам tasks.
+                 */
+                tasks.splice(0);
+                /**
+                 * При использовании DuelJS мы оповещаем все остальные вкладки о произошедшем событии.
+                 * Это сделано для экономии трафика и меньшей нагрузки на сервер.
+                 * Повторюсь что в данном приложении использование DuelJS практически не несет
+                 * смысла, и добавлено сюда лишь в целях обучения возможностям DuelJS.
+                 */
+                channel.broadcast('tasks.sync', result);
+                for (var i = result.length - 1; i >= 0; i--) {
+                    /**
+                     * Вносим в массив поочередно объекты из result.
+                     * Мы делаем так потому, что не можем написать
+                     * tasks = result
+                     * так как это очистит наши методы.
+                     */
+                    tasks.push(result[i]);
+                }
+                /**
+                 * Идея использования подобного синтаксиса пришла мне когда я начал изучать ReactJS.
+                 * Да простят меня за это фанаты React, но 128кб ради одного метода render -
+                 * я был использовать не намерен.
+                 *
+                 * React по сути компилирует свой JSX в почти что VanillaJS.
+                 */
+                todoList.render(tasks);
+            });
+        } else {
+            /**
+             * Этот блок кода делает то же что и блок выше.
+             * Выполняться он будет только на неактивных страницах.
+             * Уже полученный с сервера tasks будет передан в первый (нулевой)
+             * аргумент этой функции.
+             */
+            tasks.splice(0);
+            var result = arguments[0];
+            for (var i = result.length - 1; i >= 0; i--) {
+                tasks.push(result[i]);
+            }
+            todoList.render(tasks);
+        }
+    };
+
+    /**
+     * К сожалению я так и не реализовал использование метода
+     * переименования в этом приложении.
+     *
+     * Даёшь НЕТ прокрастинации!
+     */
+    tasks.rename = function (id, title) {
+        for (var i = tasks.length - 1; i >= 0; i--) {
+            if (tasks[i]._id.$oid === id) {
+                tasks[i].title = title;
+                todoList.render(tasks);
+                if (window.isMaster()) {
+                    channel.broadcast('tasks.rename', id, title);
+                    var api = new MongoRESTRequest(config);
+                    /**
+                     * Вот так просто можно отредактировать документ на сервере.
+                     *
+                     * http://docs.mongolab.com/restapi/#view-edit-delete-document
+                     */
+                    api.put('tasks/' + id, {title: title});
+                }
+                break;
+            }
+        }
+    };
+
+    /**
+     * Метод для добавления нового документа task в коллекцию tasks.
+     */
+    tasks.add = function (task) {
+        /**
+         * Снова проверяем активная ли это вкладка.
+         * Снова повторяю что это лишь для примера использования DuelJS
+         * в разработке своих приложений.
+         */
+        if (window.isMaster()) {
+            /**
+             * Нам потребуется два новых, отдельных потока (хотя на самом деле один).
+             * Они будут заняты исключительно передачей новых документов
+             * на сервер и им будет всё равно на судьбу остальных потоков.
+             *
+             * Первый поток будет занят новым документом task.
+             * Второй поток будет занят новым документом log.
+             * Использование коллекции logs для логирования показано тут
+             * в целях обучения и на деле никак не обрабатывается нашим приложением.
+             *
+             * Если вы будете делать своё приложение на основе этого, то вы сможете
+             * написать в качестве примера визулальный график создания/решения задач.
+             */
+            var apiThread1 = new MongoRESTRequest(config);
+            var apiThread2 = new MongoRESTRequest(config);
+            apiThread1.post('tasks', task, function (result) {
+                /**
+                 * Обратите внимание что прежде чем добавить task на страницу
+                 * мы прежде вносим его в базу данных.
+                 *
+                 * Сделано это для получения ID документа, который сгенерирует
+                 * MongoDB и отдаст нам в наш callback.
+                 *
+                 * http://docs.mongolab.com/restapi/#insert-document
+                 */
+                tasks.push(result);
+                channel.broadcast('tasks.add', result);
+                todoList.render(tasks);
+            });
+            /**
+             * Очень легко можно передать текущую дату и время в MongoDB.
+             */
+            apiThread2.post('logs', {
+                when: new Date(),
+                type: 'created'
+            });
+        } else {
+            /**
+             * Этот блок кода делает то же что и блок выше.
+             * Выполняться он будет только на неактивных страницах.
+             * Уже полученный с сервера task, вместе с его ID, будет передан в первый (нулевой)
+             * аргумент этой функции.
+             */
+            tasks.push(arguments[0]);
+            todoList.render(tasks);
+        }
+    };
+
+    /**
+     * Метод ниже служит нам для удаления документов из базы по ID документа.
+     */
+    tasks.remove = function (id) {
+        /**
+         * Простой перебор массива tasks для поиска нужного документа.
+         */
+        for (var i = tasks.length - 1; i >= 0; i--) {
+            if (tasks[i]._id.$oid === id) {
+                /**
+                 * После того, как мы нашли документ в массиве tasks, у которого ID
+                 * равен искомому ID.
+                 */
+                if (window.isMaster()) {
+                    /**
+                     * Делаем запрос на удаление из активного окна.
+                     *
+                     * Как и в случае с POST - мы логируем удаление и
+                     * поэтому нам потребуется два потока.
+                     *
+                     * Нам не требуется удалять что-то из массива, потому
+                     * что в нашем приложении используется автоматическое обноление
+                     * массива tasks, каждые 30 секунд.
+                     */
+                    var apiThread1 = new MongoRESTRequest(config);
+                    var apiThread2 = new MongoRESTRequest(config);
+                    apiThread1.delete('tasks/' + id);
+                    apiThread2.post('logs', {
+                        when: new Date(),
+                        type: 'done'
+                    });
+                }
+                break;
+            }
+        }
+    };
+
+    /**
+     * Простое обновление данных, с периодом в 30 секунд.
+     */
+    setInterval(function () {
+        if (window.isMaster()) {
+            tasks.sync();
+        }
+    }, 30000);
+
+    /**
+     * Так как мы используем DuelJS - зададим callbacks для событий.
+     */
+    channel.on('tasks.add', tasks.add);
+    channel.on('tasks.sync', tasks.sync);
+    channel.on('tasks.rename', tasks.rename);
+
+    /**
+     * Последнее что мы сделаем при загрузке страницы - обновим данные на ней.
+     */
+    tasks.sync();
+</script>
+</body>
+</html>
