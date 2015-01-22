@@ -1,0 +1,6 @@
+{
+  "name": "cloudtasktracker",
+  "dependencies": {
+    "duel": "~1.2.0"
+  }
+}

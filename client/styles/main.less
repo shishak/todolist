@@ -1,0 +1,230 @@
+@import 'palette';
+
+@themeRed: 'red';
+@themePink: 'pink';
+@themePurple: 'purple';
+@themeDeepPurple: 'deep-purple';
+@themeIndigo: 'indigo';
+@themeBlue: 'blue';
+@themeLightBlue: 'light-blue';
+@themeCyan: 'cyan';
+@themeTeal: 'teal';
+@themeGreen: 'green';
+@themeLightGreen: 'light-green';
+@themeLime: 'lime';
+@themeYellow: 'yellow';
+@themeAmber: 'amber';
+@themeOrange: 'orange';
+@themeDeepOrange: 'deep-orange';
+@themeBrown: 'brown';
+@themeGrey: 'grey';
+@themeBlueGrey: 'blue-grey';
+
+/**
+ * http://www.google.com/design/spec/style/color.html#color-color-palette
+ * thanks to https://github.com/shuhei/material-colors
+ */
+@theme: @themePink;
+
+@r50: 'md-@{theme}-50';
+@r100: 'md-@{theme}-100';
+@r200: 'md-@{theme}-200';
+@r300: 'md-@{theme}-300';
+@r400: 'md-@{theme}-400';
+@r500: 'md-@{theme}-500';
+@r600: 'md-@{theme}-600';
+@r700: 'md-@{theme}-700';
+@r800: 'md-@{theme}-800';
+@r900: 'md-@{theme}-900';
+
+@color50: @@r50;
+@color100: @@r100;
+@color200: @@r200;
+@color300: @@r300;
+@color400: @@r400;
+@color500: @@r500;
+@color600: @@r600;
+@color700: @@r700;
+@color800: @@r800;
+@color900: @@r900;
+
+@font-face {
+  font-family: 'Roboto Medium';
+  src: url('../fonts/Roboto-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto Light';
+  src: url('../fonts/Roboto-Light.ttf') format('truetype');
+}
+
+body {
+  font-family: 'Roboto Medium', Roboto, sans-serif;
+  font-size: 24px;
+  background-color: @color900;
+  color: @color50;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  display: block;
+  -webkit-user-select: none;
+  user-select: none;
+  width: 1cw;
+  background-color: @color800;
+  padding: 20px 20px 23px 30px;
+  font-family: 'Roboto Light', Roboto, sans-serif;
+  font-size: 45px;
+
+  &:hover {
+    background-color: @color500;
+    cursor: pointer;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+#container i.fa-circle-o-notch {
+  padding: 50px;
+  color: @color800;
+}
+
+@-webkit-keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+#fake-header {
+  position: absolute;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}
+
+.fadeInLeft {
+  -webkit-animation-name: fadeInLeft;
+  animation-name: fadeInLeft;
+  -webkit-animation-duration: 0.8s;
+  animation-duration: 0.8s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+ul {
+  display: block;
+  width: 100%;
+  list-style: none;
+  -webkit-padding-start: 0;
+  -webkit-margin-before: 0;
+
+  li {
+    width: 100%;
+    display: block;
+
+    label {
+      width: 100%;
+      display: block;
+      transition: background 0.2s ease;
+      -webkit-user-select: none;
+      user-select: none;
+
+      &:first-child {
+        padding-top: 6px;
+      }
+
+      &:hover {
+        background-color: @color700;
+        cursor: pointer;
+      }
+
+      i.fa-check-fixed {
+        position: relative;
+        left: -39px;
+      }
+
+      input[type='checkbox'] {
+        margin: 32px;
+        cursor: pointer;
+        visibility: hidden;
+      }
+    }
+  }
+}
+
+#extendable {
+  width: 1cw;
+  background-color: lighten(@color900, 1%);
+  color: @color100;
+  padding: 28px;
+  display: none;
+
+  input {
+    width: 300px;
+    font-family: 'Roboto Medium', Roboto, sans-serif;
+    border: 1px solid transparent;
+    background-color: @color900;
+    border-top-left-radius: 1px;
+    border-bottom-left-radius: 1px;
+    padding: 8px 8px 8px 12px;
+    font-size: 26px;
+    color: @color100;
+    transition: background 0.2s ease;
+
+    &:focus {
+      outline: none;
+      background-color: @color700;
+      color: @color50;
+      + button {
+        cursor: pointer;
+        background-color: @color600;
+        color: @color50;
+      }
+    }
+  }
+
+  button {
+    padding: 9px 40px 8px;
+    font-size: 26px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    outline: none;
+    color: @color100;
+    border-top-right-radius: 1px;
+    border-bottom-right-radius: 1px;
+    transition: background 0.2s ease;
+    border-left: none;
+
+    &:hover {
+      cursor: pointer;
+      background-color: @color600;
+      color: @color50;
+    }
+  }
+}
