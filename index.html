@@ -595,7 +595,7 @@
                      *
                      * Нам не требуется удалять что-то из массива, потому
                      * что в нашем приложении используется автоматическое обноление
-                     * массива tasks, каждые 30 секунд.
+                     * массива tasks, каждые 5 секунд.
                      */
                     var apiThread1 = new MongoRESTRequest(config);
                     var apiThread2 = new MongoRESTRequest(config);
@@ -617,7 +617,7 @@
         if (window.isMaster()) {
             tasks.sync();
         }
-    }, 30000);
+    }, 5000);
 
     /**
      * Так как мы используем DuelJS - зададим callbacks для событий.
