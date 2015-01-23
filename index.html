@@ -100,7 +100,7 @@
             /**
              * Добавить новую задачу
              */
-            tasks.add({title: taskInput.value});
+            tasks.add({title: taskInput.value.replace(/<>&/ig, '')});
             /**
              * Очистить taskInput
              */
