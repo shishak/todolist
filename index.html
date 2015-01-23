@@ -96,14 +96,16 @@
      * Обработчик события клика по кнопке добавления taskBtn.
      */
     taskBtn.onclick = function () {
-        /**
-         * Добавить новую задачу
-         */
-        tasks.add({title: taskInput.value});
-        /**
-         * Очистить taskInput
-         */
-        taskInput.value = '';
+        if (taskInput.value) {
+            /**
+             * Добавить новую задачу
+             */
+            tasks.add({title: taskInput.value});
+            /**
+             * Очистить taskInput
+             */
+            taskInput.value = '';
+        }
     };
 
     /**
