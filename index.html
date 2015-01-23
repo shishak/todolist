@@ -168,7 +168,7 @@
                      * TextNode это просто текст, мы можем
                      * вставлять его в какой-либо DOM-элемент.
                      */
-                    itemText = document.createTextNode(item.title);
+                    itemText = document.createTextNode(item.title.replace(/<>&/ig, ''));
                 /**
                  * Указываем что itemCheck это не просто input.
                  * На самом деле использовать именно checkbox
